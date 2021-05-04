@@ -1,5 +1,11 @@
 {
   "name": "quiz-app",
+  "author": "Ischanov Vladislav <vladdevelop.info@gmail.com>",
+  "keywords": [
+    "Quiz",
+    "Quiz-app",
+    "React"
+  ],
   "version": "0.1.0",
   "private": true,
   "dependencies": {
