@@ -2,6 +2,8 @@ import {Component} from 'react'
 import classes from './Quiz.module.scss'
 import ActiveQuiz from '../../components/ActiveQuiz/ActiveQuiz'
 import FinishedQuiz from '../../components/FinishedQuiz/FinishedQuiz'
+import axios from '../../axios/axios-quiz'
+import Loader from '../../components/UI/Loader/Loader'
 
 class Quiz extends Component {
   state = {
@@ -9,33 +11,12 @@ class Quiz extends Component {
     isFinished: false,
     activeQuestion: 0,
     answerState: null,
-    quiz: [
-      {
-        question: 'Какого цвета небо?',
-        correctAnswerId: 2,
-        id: 1,
-        answers: [
-          {text: 'Красного', id: 1},
-          {text: 'Синего', id: 2},
-          {text: 'Черного', id: 3},
-          {text: 'Фиолетового', id: 4},
-        ],
-      },
-      {
-        question: 'Америка - ',
-        correctAnswerId: 1,
-        id: 2,
-        answers: [
-          {text: 'Страна возможностей', id: 1},
-          {text: 'Страна 3го мира', id: 2},
-          {text: 'Планета солнечной системы', id: 3},
-          {text: 'Поселение индусов', id: 4},
-        ],
-      },
-    ],
+    loading: true,
+    quiz: []
   }
 
   onAnswerClickHandler = (answerId) => {
+    console.log(answerId)
     if (this.state.answerState) {
       const key = Object.keys(this.state.answerState)[0]
       if (this.state.answerState[key] === 'success') {
@@ -46,7 +27,7 @@ class Quiz extends Component {
     const question = this.state.quiz[this.state.activeQuestion]
     const results = this.state.results
 
-    if (question.correctAnswerId === answerId) {
+    if (question.rightAnswerId === answerId) {
       if(!results[question.id]) {
         results[question.id] = 'success'
       }
@@ -92,14 +73,28 @@ class Quiz extends Component {
     })
   }
 
+  async componentDidMount() {
+    try {
+      const res = await axios.get(`quizes/${this.props.match.params.id}.json`)
+      const quiz = res.data
+
+      this.setState({
+        quiz, loading: false
+      })
+    } catch(err) {
+      console.log(err)
+    }
+  }
+
   render() {
     return (
       <div className={classes.Quiz}>
         <div className={classes.QuizWrapper}>
           <h1>Answer to all questions</h1>
 
-          {
-            this.state.isFinished 
+         {this.state.loading 
+         ? <Loader /> 
+         :  this.state.isFinished 
               ? <FinishedQuiz 
                   result={this.state.results}
                   quiz={this.state.quiz}
@@ -114,7 +109,6 @@ class Quiz extends Component {
                   state={this.state.answerState}
                 />
           }
-
           
         </div>
       </div>
