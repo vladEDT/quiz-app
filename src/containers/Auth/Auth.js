@@ -1,10 +1,12 @@
-import {Component} from "react"
-import classes from "./Auth.module.scss"
-import Button from "./../../components/UI/Button/Button"
-import Input from "./../../components/UI/Input/Input"
+import {Component} from 'react'
+import classes from './Auth.module.scss'
+import Button from './../../components/UI/Button/Button'
+import Input from './../../components/UI/Input/Input'
+import axios from 'axios'
 
 function validateEmail(email) {
-  const re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  const re =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
   return re.test(String(email).toLowerCase())
 }
 
@@ -13,37 +15,67 @@ class Auth extends Component {
     isFormValid: false,
     formControls: {
       email: {
-        value: "",
-        type: "email",
-        label: "Email",
-        errorMessage: "Введите корректный Email",
+        value: '',
+        type: 'email',
+        label: 'Email',
+        errorMessage: 'Введите корректный Email',
         valid: false,
         touched: false,
         validation: {
           required: true,
-          email: true,
-        },
+          email: true
+        }
       },
       password: {
-        value: "",
-        type: "password",
-        label: "Пароль",
-        errorMessage: "Введите корректный пароль",
+        value: '',
+        type: 'password',
+        label: 'Пароль',
+        errorMessage: 'Введите корректный пароль',
         valid: false,
         touched: false,
         validation: {
           required: true,
-          minLength: 6,
-        },
-      },
-    },
+          minLength: 6
+        }
+      }
+    }
   }
 
-  loginHandler = () => {}
+  loginHandler = async () => {
+    const authData = {
+      email: this.state.formControls.email.value,
+      password: this.state.formControls.password.value,
+      returnSecureToken: true
+    }
+    try {
+      const res = await axios.post(
+        'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA0_9xDlXRPtt_D1NKNujQMOL6NlYdczwU',
+        authData
+      )
+      console.log(res.data)
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
-  registerHandler = () => {}
+  registerHandler = async () => {
+    const authData = {
+      email: this.state.formControls.email.value,
+      password: this.state.formControls.password.value,
+      returnSecureToken: true
+    }
+    try {
+      const res = await axios.post(
+        'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyA0_9xDlXRPtt_D1NKNujQMOL6NlYdczwU',
+        authData
+      )
+      console.log(res.data)
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
-  submitHandler = (e) => {
+  submitHandler = e => {
     e.preventDefault()
   }
 
@@ -55,7 +87,7 @@ class Auth extends Component {
     let isValid = true
 
     if (validation.required) {
-      isValid = value.trim() !== "" && isValid
+      isValid = value.trim() !== '' && isValid
     }
 
     if (validation.email) {
@@ -81,13 +113,13 @@ class Auth extends Component {
 
     let isFormValid = true
 
-    Object.keys(formControls).forEach((name) => {
+    Object.keys(formControls).forEach(name => {
       isFormValid = formControls[name].valid && isFormValid
     })
 
     this.setState({
       formControls,
-      isFormValid,
+      isFormValid
     })
   }
 
@@ -104,7 +136,7 @@ class Auth extends Component {
           label={control.label}
           shouldValidate={!!control.validation}
           errorMessage={control.errorMessages}
-          onChange={(e) => this.onChangeHandler(e, controlName)}
+          onChange={e => this.onChangeHandler(e, controlName)}
         />
       )
     })
@@ -120,14 +152,14 @@ class Auth extends Component {
             {this.renderInputs()}
 
             <Button
-              type="success"
+              type='success'
               onClick={this.loginHandler}
               disabled={!this.state.isFormValid}
             >
               Войти
             </Button>
             <Button
-              type="primary"
+              type='primary'
               onClick={this.registerHandler}
               disabled={!this.state.isFormValid}
             >
